@@ -93,6 +93,8 @@ async def list(request:Request):
     # insert 작업 진행
     # documents = collection.find({})
     # # documents.next()  # 오류 여부 확인용
+    conditions = { 'name': { '$regex': '이' } }
+
     # # cast cursor to list 
     user_list = await collection_user.get_all()
 
@@ -102,6 +104,17 @@ async def list(request:Request):
     #     pass
 
     # return templates.TemplateResponse(name="users/list.html"
+    return templates.TemplateResponse(name="users/list_jinja.html"
+                                      , context={'request':request
+                                                 , 'users' : user_list })
+
+@router.get("/search") # 검색
+async def list(request:Request):
+    user_dict = dict(request._query_params)
+    print(user_dict)
+    conditions = { 'name': { '$regex': user_dict.word } }
+
+    user_list = await collection_user.getsbyconditions(conditions)
     return templates.TemplateResponse(name="users/list_jinja.html"
                                       , context={'request':request
                                                  , 'users' : user_list })

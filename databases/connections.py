@@ -40,4 +40,21 @@ class Database:
     # 저장
     async def save(self, document) -> None:
         await document.create()
-        return None    
+        return None   
+     
+    # column 값으로 여러 Documents 가져오기
+    async def getsbyconditions(self, conditions:dict) -> [Any]:
+        documents = await self.model.find(conditions).to_list()  # find({})
+        if documents:
+            return documents
+        return False    
+    
+if __name__ == '__main__':
+    settings = Settings()
+    async def init_db():
+        await settings.initialize_database()
+
+    collection_user = Database(User)
+    conditions = "{ name: { $regex: '이' } }"
+    list = collection_user.getsbyconditions(conditions)
+    pass
