@@ -17,3 +17,22 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
+
+class Database:
+    # model 즉 collection
+    def __init__(self, model) -> None:
+        self.model = model
+        pass       
+
+    # 전체 리스트
+    async def get_all(self) :
+        documents = await self.model.find_all().to_list()   # find({})
+        pass
+        return documents
+    
+    # 상세 보기
+    async def get(self, id: PydanticObjectId) -> Any:
+        doc = await self.model.get(id)  # find_one()
+        if doc:
+            return doc
+        return False    
