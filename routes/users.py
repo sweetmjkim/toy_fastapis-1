@@ -112,7 +112,8 @@ async def list(request:Request):
 async def list(request:Request):
     user_dict = dict(request._query_params)
     print(user_dict)
-    conditions = { 'name': { '$regex': user_dict.word } }
+    # { 'name': { '$regex': user_dict.word } }
+    conditions = { user_dict.key : { '$regex': user_dict.word } }
 
     user_list = await collection_user.getsbyconditions(conditions)
     return templates.TemplateResponse(name="users/list_jinja.html"
