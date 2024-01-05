@@ -44,6 +44,21 @@ async def insert(request:Request):
     print(dict(request._query_params))
     return templates.TemplateResponse(name="users/login.html", context={'request':request})
 
+# 회원 가입 /users/insert -> users/login.html
+@router.post("/insert") # 펑션 호출 방식
+async def insert_post(request:Request):
+    user_dict = dict(await request.form())
+    print(user_dict)
+    # 저장
+    user = User(**user_dict)
+    await collection_user.save(user)
+
+    # 리스트 정보
+    user_list = await collection_user.get_all()
+    return templates.TemplateResponse(name="users/list_jinja.html"
+                                      , context={'request':request
+                                                 , 'users' : user_list })
+
 # 회원 리스트 /users/list -> users/list.html
 @router.post("/list") # 펑션 호출 방식
 async def list(request:Request):
