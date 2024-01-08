@@ -109,11 +109,13 @@ async def list(request:Request):
                                                  , 'users' : user_list })
 
 @router.get("/search") # 검색
+# http://127.0.0.1:8000/users/search?key=name&word=김
 async def list(request:Request):
     user_dict = dict(request._query_params)
     print(user_dict)
+    # db.answers.find({'name':{ '$regex': '김' }})
     # { 'name': { '$regex': user_dict.word } }
-    conditions = { user_dict.key : { '$regex': user_dict.word } }
+    conditions = { user_dict['key'] : { '$regex': user_dict["word"] } }
 
     user_list = await collection_user.getsbyconditions(conditions)
     return templates.TemplateResponse(name="users/list_jinja.html"
