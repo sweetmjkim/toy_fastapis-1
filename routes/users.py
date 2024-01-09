@@ -60,11 +60,12 @@ async def insert_post(request:Request):
                                                  , 'users' : user_list })
 
 # 회원 리스트 /users/list -> users/list.html
-@router.post("/list") # 펑션 호출 방식
+@router.get("/list") # 펑션 호출 방식
 async def list(request:Request):
     await request.form()
     print(dict(await request.form()))
-    return templates.TemplateResponse(name="users/list.html", context={'request':request})
+    return templates.TemplateResponse(name="users/list.html"
+                                      , context={'request':request})
 
 # from pymongo import MongoClient
 # # mongodb에 접속 -> 자원에 대한 class
@@ -80,7 +81,7 @@ from databases.connections import Database
 from models.users import User
 collection_user = Database(User)
 
-@router.get("/list") # 펑션 호출 방식
+@router.get("/list_jinja") # 펑션 호출 방식
 async def list(request:Request):
     print(dict(request._query_params))
     # user_list = [
@@ -93,7 +94,6 @@ async def list(request:Request):
     # insert 작업 진행
     # documents = collection.find({})
     # # documents.next()  # 오류 여부 확인용
-    conditions = { 'name': { '$regex': '이' } }
 
     # # cast cursor to list 
     user_list = await collection_user.get_all()
@@ -107,6 +107,32 @@ async def list(request:Request):
     return templates.TemplateResponse(name="users/list_jinja.html"
                                       , context={'request':request
                                                  , 'users' : user_list })
+
+from typing import Optional
+@router.get("/list_jinja_pagination/{page_number}")
+@router.get("/list_jinja_pagination") # 검색 with pagination
+# http://127.0.0.1:8000/users/list_jinja_pagination?key_name=name&word=김
+# http://127.0.0.1:8000/users/list_jinja_pagination/2?key_name=name&word=
+# http://127.0.0.1:8000/users/list_jinja_pagination/2?key_name=name&word=김
+async def list(request:Request, page_number: Optional[int] = 1):
+    user_dict = dict(request._query_params)
+    print(user_dict)
+    # db.answers.find({'name':{ '$regex': '김' }})
+    # { 'name': { '$regex': user_dict.word } }
+    conditions = { }
+    try :
+        search_word = user_dict["word"]
+    except:
+        search_word = None
+    if search_word:     # 검색어 작성
+        conditions = {user_dict['key_name'] : { '$regex': user_dict["word"] }}
+    
+    user_list, pagination = await collection_user.getsbyconditionswithpagination(conditions
+                                                                     ,page_number)
+    return templates.TemplateResponse(name="/users/list_jinja_paginations.html"
+                                      , context={'request':request
+                                                 , 'users' : user_list
+                                                  ,'pagination' : pagination })
 
 @router.get("/search") # 검색
 # http://127.0.0.1:8000/users/search?key=name&word=김

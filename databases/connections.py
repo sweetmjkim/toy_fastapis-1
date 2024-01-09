@@ -18,6 +18,7 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
 
+from utils.paginations import Paginations
 class Database:
     # model 즉 collection
     def __init__(self, model) -> None:
@@ -49,6 +50,16 @@ class Database:
             return documents
         return False    
     
+    async def getsbyconditionswithpagination(self
+                                             , conditions:dict, page_number) -> [Any]:
+        # find({})
+        total = await self.model.find(conditions).count()
+        pagination = Paginations(totalCount=total, currentPage=page_number)
+        documents = await self.model.find(conditions).skip(pagination.pageBegin).limit(pagination.pageScale).to_list()
+        if documents:
+            return documents, pagination
+        return False    
+
 if __name__ == '__main__':
     settings = Settings()
     async def init_db():
