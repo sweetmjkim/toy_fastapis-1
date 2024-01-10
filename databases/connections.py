@@ -54,8 +54,8 @@ class Database:
                                              , conditions:dict, page_number) -> [Any]:
         # find({})
         total = await self.model.find(conditions).count()
-        pagination = Paginations(totalCount=total, currentPage=page_number)
-        documents = await self.model.find(conditions).skip(pagination.pageBegin).limit(pagination.pageScale).to_list()
+        pagination = Paginations(total_records=total, current_page=page_number)
+        documents = await self.model.find(conditions).skip(pagination.start_record_number).limit(pagination.records_per_page).to_list()
         if documents:
             return documents, pagination
         return False    
