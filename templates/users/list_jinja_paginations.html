@@ -13,7 +13,7 @@
       </select>
     </div>
     <div class="col-6">
-      <input class="form-control" placeholder="Enter Search!" name="word">
+      <input class="form-control" placeholder="Enter Search!" name="word" value="{{request._query_params.word}}">
     </div>
     <div class="col-4">
       <button type="submit" class="btn btn-primary" formaction="/users/list_jinja_pagination"
@@ -33,7 +33,7 @@
     <tbody>
       {% for user in users %}
       <tr>
-        <td>{{pagination.start_record_number + loop.index}}</td>
+        <td>{{pagination.start_record_number + loop.index0}}</td>
         <td>{{user.name}}</td>
         <td>{{user.email | length}}, {{user.email}}</td>
         <td><button formaction="/users/read/{{user.id}}">read</button></td>
@@ -45,7 +45,6 @@
     <h2>normal paginations 총 수: {{pagination.total_records}}</h2>
     <nav aria-label="Page navigation">
       <ul class="pagination justify-content-center">
-        <form method="get">
           <li class="page-item {{ '' if pagination.has_previous_block else 'disabled' }}">
             <button type="submit" class="page-link" formaction="/users/list_jinja_pagination/{{pagination.first_page}}">
               맨 처음
@@ -73,7 +72,6 @@
               맨 끝
             </button>
           </li>
-        </form>
       </ul>
     </nav>
   </div>
