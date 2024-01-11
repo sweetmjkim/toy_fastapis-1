@@ -47,7 +47,7 @@
       <ul class="pagination justify-content-center">
         <form method="get">
           <li class="page-item {{ '' if pagination.has_previous_block else 'disabled' }}">
-            <button type="submit" class="page-link" formaction="/users/list_jinja_pagination/first_page">
+            <button type="submit" class="page-link" formaction="/users/list_jinja_pagination/{{pagination.first_page}}">
               맨 처음
             </button>
 
