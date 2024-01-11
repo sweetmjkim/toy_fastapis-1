@@ -3,12 +3,11 @@ from math import ceil
 class Paginations:
     def __init__(self, total_records, current_page):
         self.records_per_page = 10  # 한 페이지 당 레코드 수
-        self.pages_per_block = 5  # 한 블럭 당 페이지 수
+        self.pages_per_block = 7  # 한 블럭 당 페이지 수
 
         self.total_records = total_records  # 총 레코드 수
         self.current_page = current_page # 현재 페이지
         self.records_per_page = 10  # 한 페이지 당 레코드 수
-        self.pages_per_block = 5  # 한 블럭 당 페이지 수
 
         # 전체 페이지 수
         self.total_pages = self._calculate_total_pages()
