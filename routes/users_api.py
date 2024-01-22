@@ -81,7 +81,7 @@ async def update_user_withjson(id: PydanticObjectId, request:Request) -> User:
         )
     return user_update
 
-# 전체 내용 가져오기
+# 전체 내용 가져오기(mongoDB에 있는 모든정보를 postman으로 보여줘)
 @router.get("/")
 async def retrieve_all_users() -> dict:
     user = await user_database.get_all()
