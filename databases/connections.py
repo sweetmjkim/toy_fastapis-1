@@ -2,6 +2,7 @@ from typing import Any, List, Optional
 
 from beanie import init_beanie, PydanticObjectId
 from models.users import User
+from models.events import Event
 from motor.motor_asyncio import AsyncIOMotorClient
 from pydantic import BaseModel
 # 변경 후 코드
@@ -13,12 +14,13 @@ class Settings(BaseSettings):
     async def initialize_database(self):
         client = AsyncIOMotorClient(self.DATABASE_URL)
         await init_beanie(database=client.get_default_database(),
-                          document_models=[User])
+                          document_models=[User, Event])
 
     class Config:
         env_file = ".env"
 
 from utils.paginations import Paginations
+import json
 class Database:
     # model 즉 collection
     def __init__(self, model) -> None:
@@ -40,8 +42,8 @@ class Database:
     
     # 저장
     async def save(self, document) -> None:
-        await document.create()
-        return None   
+        doc = await document.create()
+        return doc   
      
     # column 값으로 여러 Documents 가져오기
     async def getsbyconditions(self, conditions:dict) -> [Any]:
@@ -60,6 +62,26 @@ class Database:
             return documents, pagination
         return False    
 
+    async def delete(self, id: PydanticObjectId):
+            doc = await self.get(id)
+            if not doc:
+                return False
+            await doc.delete()
+            return True
+
+# update with params json
+    async def update_withjson(self, id: PydanticObjectId, body: json):
+        doc_id = id
+
+        # des_body = {k: v for k, v in des_body.items() if v is not None}
+        update_query = {"$set": {**body}}
+
+        doc = await self.get(doc_id)
+        if not doc:
+            return False
+        await doc.update(update_query)
+        return doc
+    
 if __name__ == '__main__':
     settings = Settings()
     async def init_db():
@@ -68,4 +90,4 @@ if __name__ == '__main__':
     collection_user = Database(User)
     conditions = "{ name: { $regex: '이' } }"
     list = collection_user.getsbyconditions(conditions)
-    pass
+pass
