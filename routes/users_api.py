@@ -41,7 +41,7 @@ async def retrieve_user_pswd(id: PydanticObjectId) -> User:
     if not user_pswd:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail="Uesr with supplied ID does not exist"
+            detail="Uesr with supplied pswd does not exist"
         )
     return user_pswd
 
